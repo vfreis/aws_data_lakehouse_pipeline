@@ -1,0 +1,7 @@
+bucket: data-lakehouse-demo
+
+layers:
+  bronze: bronze/coffee_data/
+  silver: silver/coffee_data/
+
+schedule: daily
