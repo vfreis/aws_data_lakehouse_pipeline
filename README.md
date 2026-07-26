@@ -1,188 +1,213 @@
-<h1 align="center">
-🚀 AWS Data Lakehouse Pipeline
-</h1>
-
-<h3 align="center">
-Scalable Data Engineering Architecture using AWS, Spark & Airflow
-</h3>
+<h1 align="center">AWS Data Lakehouse Pipeline</h1>
 
 <p align="center">
-<img src="https://img.shields.io/badge/AWS-Data%20Engineering-orange?style=for-the-badge&logo=amazonaws"/>
-<img src="https://img.shields.io/badge/Python-ETL-blue?style=for-the-badge&logo=python"/>
-<img src="https://img.shields.io/badge/Apache%20Spark-Processing-red?style=for-the-badge&logo=apachespark"/>
-<img src="https://img.shields.io/badge/Airflow-Orchestration-green?style=for-the-badge&logo=apacheairflow"/>
-<img src="https://img.shields.io/badge/Data%20Lakehouse-Bronze%20%7C%20Silver-purple?style=for-the-badge"/>
+  Production-inspired data engineering architecture using AWS, PySpark, Apache Airflow, and layered lakehouse design.
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=FF9900" alt="AWS" />
+  <img src="https://img.shields.io/badge/PySpark-E25A1C?style=for-the-badge&logo=apachespark&logoColor=white" alt="PySpark" />
+  <img src="https://img.shields.io/badge/Apache_Airflow-017CEE?style=for-the-badge&logo=apacheairflow&logoColor=white" alt="Apache Airflow" />
+  <img src="https://img.shields.io/badge/Amazon_S3-569A31?style=for-the-badge&logo=amazons3&logoColor=white" alt="Amazon S3" />
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Architecture-Bronze_%E2%86%92_Silver-0EA5E9?style=flat-square" alt="Bronze to Silver architecture" />
+  <img src="https://img.shields.io/badge/Processing-Batch_%26_Incremental-334155?style=flat-square" alt="Batch and incremental processing" />
+  <img src="https://img.shields.io/badge/Status-Portfolio_Project-16A34A?style=flat-square" alt="Portfolio project" />
 </p>
 
 ---
 
-## 📌 Overview
+## Overview
 
-This project implements a **production-inspired AWS Data Lakehouse architecture**, designed to ingest, validate, transform and curate data using scalable distributed processing.
+This repository implements a **production-inspired AWS data lakehouse pipeline** that moves data from external sources into raw and curated storage layers.
 
-The pipeline follows modern **Data Engineering best practices**, separating data into logical layers:
+The project demonstrates how ingestion, validation, distributed transformation, and orchestration can be separated into maintainable components while preserving traceability between raw and processed datasets.
 
-✅ Bronze — Raw ingestion  
-✅ Silver — Cleaned & validated datasets  
-
-Built to simulate real-world enterprise data platforms.
+> This is a portfolio architecture designed to demonstrate engineering patterns. It is not presented as a deployed production service.
 
 ---
 
-## 🧱 Architecture
+## Architecture
 
+```text
+External APIs / Sources
+          │
+          ▼
+Python ingestion
+          │
+          ▼
+Amazon S3 — Bronze
+Immutable raw datasets
+          │
+          ▼
+Data-quality validation
+          │
+          ▼
+PySpark processing on Amazon EMR
+          │
+          ▼
+Amazon S3 — Silver
+Validated and curated Parquet datasets
+          │
+          ▼
+Analytics · BI · AI workloads
+```
 
-External API / Source
-↓
-Data Ingestion
-↓
-S3 Bronze
-↓
-Data Quality Checks
-↓
-Spark Transformation
-↓
-S3 Silver
-↓
-Analytics / BI / AI
+### Layer responsibilities
 
+| Layer | Responsibility |
+|---|---|
+| **Ingestion** | Extract data from external sources and persist raw records. |
+| **Bronze** | Preserve immutable source data for replay and traceability. |
+| **Quality** | Validate schema, nullability, consistency, and expected conditions. |
+| **Processing** | Clean, standardize, and transform data using PySpark. |
+| **Silver** | Store validated and curated datasets in Parquet format. |
+| **Orchestration** | Manage dependencies, retries, execution order, and scheduling with Airflow. |
 
 ---
 
-## ⚙️ Tech Stack
+## Engineering Capabilities Demonstrated
 
-| Layer | Technology |
-|------|------------|
+- Modular ingestion, transformation, and validation components.
+- Bronze and Silver lakehouse separation.
+- Batch and incremental processing patterns.
+- Distributed transformation with Apache Spark and PySpark.
+- Apache Airflow orchestration with dependency and retry control.
+- Data-quality checks before curated-layer delivery.
+- Structured logging and production-oriented separation of concerns.
+- Optimized Parquet output for downstream analytics workloads.
+- EMR-oriented job submission and scalable cloud processing design.
+
+---
+
+## Technology Stack
+
+| Area | Technologies |
+|---|---|
+| Cloud storage | Amazon S3 |
+| Distributed processing | Apache Spark, PySpark, Amazon EMR |
 | Orchestration | Apache Airflow |
-| Processing | Apache Spark |
-| Cloud | AWS S3 + EMR |
 | Language | Python |
-| Data Validation | Custom Quality Framework |
-| Architecture | Data Lakehouse |
-| Processing Type | Batch / Incremental |
+| Data format | Parquet |
+| Validation | Python-based data-quality rules |
+| Architecture | Data lakehouse, Bronze and Silver layers |
+| Processing modes | Batch and incremental |
 
 ---
 
-## 🔄 Pipeline Workflow
+## Pipeline Workflow
 
-### 1️⃣ Data Ingestion (Bronze Layer)
+### 1. Bronze ingestion
 
-- Extracts data from external APIs
-- Stores raw immutable datasets
-- Partitioned storage strategy
-- Incremental ingestion supported
+The ingestion component extracts data from external APIs and writes raw, immutable datasets to the Bronze layer.
 
-📂 `ingestion/api_ingestion.py`
+**Source:** [`ingestion/api_ingestion.py`](./ingestion/api_ingestion.py)
 
----
+Key concepts:
 
-### 2️⃣ Data Quality Validation
+- source-oriented ingestion;
+- partitioned raw storage;
+- replayable datasets;
+- incremental ingestion support.
 
-Ensures reliability before transformation:
+### 2. Data-quality validation
 
-- Schema validation
-- Null checks
-- Data consistency rules
-- Logging & monitoring
+Validation runs before curated delivery to identify structural and content issues.
 
-📂 `utils/data_quality.py`
+**Source:** [`utils/data_quality.py`](./utils/data_quality.py)
 
----
+Checks represented in the project include:
 
-### 3️⃣ Transformation (Silver Layer)
+- schema expectations;
+- null checks;
+- consistency rules;
+- validation logging.
 
-Using Apache Spark:
+### 3. Silver transformation
 
-- Data cleansing
-- Standardization
-- Business-ready structure
-- Optimized parquet storage
+PySpark transforms Bronze data into cleaned, standardized, business-ready datasets stored as Parquet.
 
-📂 `spark_jobs/silver_transformation.py`
+**Source:** [`spark_jobs/silver_transformation.py`](./spark_jobs/silver_transformation.py)
 
----
+### 4. Airflow orchestration
 
-### 4️⃣ Orchestration
+The DAG coordinates ingestion, validation, transformation, dependencies, and retries.
 
-Airflow DAG manages:
-
-- Execution order
-- Dependency control
-- Retry strategy
-- Pipeline observability
-
-📂 `dags/bronze_to_silver_pipeline.py`
+**Source:** [`dags/bronze_to_silver_pipeline.py`](./dags/bronze_to_silver_pipeline.py)
 
 ---
 
-## 📂 Project Structure
+## Repository Structure
 
-
+```text
 aws_data_lakehouse_pipeline/
-│
-├── dags/
-├── ingestion/
-├── spark_jobs/
-├── utils/
-├── configs/
-├── architecture/
-├── requirements.txt
+├── architecture/        # Architecture documentation and supporting assets
+├── configs/             # Pipeline configuration
+├── dags/                # Apache Airflow DAGs
+├── ingestion/           # External-source ingestion
+├── spark_jobs/          # PySpark transformation jobs
+├── utils/               # Data-quality and shared utilities
+├── requirements.txt     # Python dependencies
 └── README.md
-
-
----
-
-## ✅ Engineering Features
-
-✔ Incremental Processing  
-✔ Modular Architecture  
-✔ Data Quality Layer  
-✔ Logging System  
-✔ EMR Job Submission  
-✔ Pipeline Orchestration  
-✔ Scalable Cloud Design  
+```
 
 ---
 
-## 📈 Use Cases
+## Getting Started
 
-- Enterprise Data Platforms
-- Analytics Engineering
-- Machine Learning datasets
-- AI-ready data pipelines
-- Cloud migration scenarios
+### Prerequisites
 
----
+- Python 3.x
+- An AWS account with access to S3 and EMR
+- Apache Airflow environment
+- AWS credentials configured outside the repository
 
-## 🧠 Engineering Concepts Applied
+### Install dependencies
 
-- Data Lakehouse Architecture
-- Distributed Processing
-- Idempotent Pipelines
-- Data Governance Principles
-- Separation of Concerns
-- Production-like Orchestration
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+```
 
----
+Review the files under `configs/` and provide environment-specific AWS settings before executing the pipeline components.
 
-## 🚀 Future Improvements
-
-- Gold Layer (Business Aggregations)
-- Streaming ingestion
-- CI/CD Pipeline
-- Infrastructure as Code (Terraform)
-- Monitoring with CloudWatch
+> Do not commit AWS credentials, access keys, secrets, or environment-specific tokens to the repository.
 
 ---
 
-## 👨‍💻 Author
+## Design Decisions
 
-**Vinicios Falqueiro Reis**
+### Why Bronze and Silver?
 
-Data Engineer focused on building scalable cloud data platforms.
+The separation preserves source fidelity while allowing downstream consumers to use cleaned and standardized data without modifying raw records.
 
-🔗 LinkedIn  
-https://www.linkedin.com/in/vfalqueiroreis/
+### Why Parquet?
 
-🔗 GitHub  
-https://github.com/vfreis
+Parquet provides a columnar storage format suited to analytical workloads and distributed processing.
+
+### Why Airflow?
+
+Airflow makes task dependencies, retries, scheduling, and pipeline state explicit instead of hiding orchestration inside individual scripts.
+
+---
+
+## Roadmap
+
+- Gold layer for business aggregates.
+- Automated tests for transformations and validation rules.
+- Infrastructure as Code with Terraform.
+- CI/CD validation for Python and DAG changes.
+- CloudWatch-based monitoring and alerting.
+- Additional source connectors.
+- Streaming ingestion as a separate architecture path.
+
+---
+
+## Author
+
+**Vinicios Falqueiro Reis** — Data Engineer focused on reliable cloud data platforms and scalable pipelines.
+
+[LinkedIn](https://www.linkedin.com/in/vfalqueiroreis/) · [GitHub](https://github.com/vfreis)
