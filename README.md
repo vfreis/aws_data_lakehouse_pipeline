@@ -211,3 +211,30 @@ Airflow makes task dependencies, retries, scheduling, and pipeline state explici
 **Vinicios Falqueiro Reis** — Data Engineer focused on reliable cloud data platforms and scalable pipelines.
 
 [LinkedIn](https://www.linkedin.com/in/vfalqueiroreis/) · [GitHub](https://github.com/vfreis)
+
+---
+
+## Technical QA note (2026-11-05)
+
+**Scope:** This is a portfolio demonstration, not a verified production deployment.
+The Silver script reads JSON-array source snapshots with `multiLine=true`,
+validates the required fields, transforms data in Spark without collecting to
+Pandas, and writes a **snapshot** Parquet output via `overwrite`.
+
+**Not yet implemented:** transactional CDC, watermark advancement, Delta
+`MERGE`/upsert, recoverable Silver-to-Gold incremental processing, and
+end-to-end AWS/EMR integration tests. These remain engineering roadmap items.
+
+**Orchestration caveat:** The current DAG uses Airflow `BashOperator` with
+`spark-submit` on the task execution environment. The separate EMR steps
+helper is not wired into the DAG, so this repository must not be presented as
+proving an end-to-end EMR-submitted workflow.
+
+**Quick contract tests:** Install pytest and run `python -m pytest tests -q`.
+These tests mock the Spark interface and catch wiring regressions; they do
+**not** prove execution on a real Spark/EMR cluster. The source API produces a
+JSON array, not JSON Lines. Use the matching reader option.
+
+**Next:** add local Spark integration tests with fixtures, wire an EMR-aware
+DAG in a separate change, and build an idempotent Gold/merge example with
+failure-injection/retry tests.
